@@ -1,0 +1,195 @@
+// ============================================================================
+// SDF Lens Blur — Text
+// Demo page + component styles (compile: sass scss/style.scss css/style.css)
+// ============================================================================
+
+$color-bg: #0e0e0e;
+$color-text: #d8d8d8;
+$color-link: #ffffff;
+$color-link-hover: rgba(255, 255, 255, 0.6);
+
+// effect typography
+// (spec: Bebas Neue Pro / Expanded Bold 700 / line-height 100%)
+$fx-font-family: 'Bebas Neue Pro', 'Bebas Neue', 'Arial Narrow', sans-serif;
+$fx-font-weight: 700;
+$fx-font-style: normal;
+$fx-line-height: 1; // 100%
+$fx-text-align: left;
+$fx-font-size: clamp(3rem, 10.5vw, 9.5rem); // ~152px on a desktop viewport
+
+// lens
+$lens-size: clamp(180px, 26vw, 340px); // lens radius
+$lens-blur: 16px;                      // blur strength inside the lens
+
+// demo page ui font
+$font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+// ----------------------------------------------------------------------------
+// Component — CSS-only lens blur on real DOM text (no canvas / WebGL).
+// Two stacked copies of the text: the sharp one is masked OUT near the lens,
+// the blurred clone (added by js/main.js) is masked IN near the lens.
+// --mx / --my are updated by js/main.js with damped mouse tracking.
+// ----------------------------------------------------------------------------
+
+.lensblur {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: $color-bg;
+  color: $color-text;
+  font-family: $fx-font-family;
+  font-weight: $fx-font-weight;
+  font-style: $fx-font-style;
+  line-height: $fx-line-height;
+  text-align: $fx-text-align;
+
+  // lens position (moved by js/main.js) — starts off-screen
+  --mx: -9999px;
+  --my: -9999px;
+  --lens-size: #{$lens-size};
+  --lens-blur: #{$lens-blur};
+
+  &__text {
+    grid-area: 1 / 1; // both layers stack in the same cell
+    margin: 0;
+    padding: 0 4vw;
+    font-size: $fx-font-size;
+  }
+
+  // blurred clone (created by js/main.js) — decorative only
+  &__text--blur {
+    filter: blur(var(--lens-blur)) brightness(1.35);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  // masks activate only when the script runs (no-js = plain sharp text)
+  &--active &__text {
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+  }
+
+  &--active &__text--blur {
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+  }
+
+  // variation: outlined text (like the original demo's variation 2)
+  &--stroke &__text {
+    color: transparent;
+    -webkit-text-stroke: 0.045em $color-text;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Demo page
+// ----------------------------------------------------------------------------
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: $color-text;
+  background-color: $color-bg;
+  font-family: $font-stack;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.demo-stage {
+  position: fixed;
+  inset: 0;
+}
+
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    'title demos' 
+    'links tags';
+  align-content: space-between;
+  padding: 1.5rem 2rem;
+  pointer-events: none;
+
+  a {
+    pointer-events: auto;
+    color: $color-link;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+
+    &:hover,
+    &:focus {
+      color: $color-link-hover;
+    }
+  }
+
+  &__title {
+    grid-area: title;
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  &__links {
+    grid-area: links;
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__tags {
+    grid-area: tags;
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+  }
+
+  &__demos {
+    grid-area: demos;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: end;
+
+    span {
+      opacity: 0.6;
+    }
+
+    a.selected {
+      color: $color-link-hover;
+      text-decoration: none;
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'title'
+      'demos'
+      'links';
+
+    &__demos,
+    &__tags {
+      justify-content: start;
+    }
+
+    &__tags {
+      display: none;
+    }
+  }
+}

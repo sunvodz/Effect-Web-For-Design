@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Text + SDF Lens Blur — Trust our Craftsmanship</title>
+	<meta name="description" content="Interactive SDF lens blur effect applied to text, based on the Codrops SDF Lens Blur demo." />
+	<!-- fallback for "Bebas Neue Pro" (commercial): free Bebas Neue from Google Fonts -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" />
+	<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+	<!--
+		ตัวหนังสือเป็น HTML จริง (ไม่มี canvas) — สไตล์ทั้งหมดอยู่ใน scss/style.scss
+		เอฟเฟกต์เลนส์เบลอทำด้วย CSS mask ตามเมาส์ (js/main.js แค่ขยับตำแหน่งเลนส์)
+	-->
+	<div class="lensblur demo-stage" data-lensblur>
+		<p class="lensblur__text">Trust our<br>Craftsmanship</p>
+	</div>
+
+	<header class="frame">
+		<h1 class="frame__title">Text + SDF Lens Blur</h1>
+		<nav class="frame__demos">
+			<span>Variations:</span>
+			<a data-mode="stroke" href="index.html?mode=stroke">Stroke</a>
+			<a data-mode="fill" href="index.html?mode=fill">Fill</a>
+		</nav>
+		<nav class="frame__links">
+			<a href="https://tympanus.net/Tutorials/SDFLensBlur/index.html?var=2">Original demo</a>
+			<a href="https://github.com/guilanier/codrops-sdf-lensblur">Original source</a>
+		</nav>
+		<nav class="frame__tags">
+			<span>#webgl</span>
+			<span>#sdf</span>
+			<span>#shader</span>
+		</nav>
+	</header>
+
+	<script src="js/main.js"></script>
+</body>
+</html>

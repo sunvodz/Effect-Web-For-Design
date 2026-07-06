@@ -1,0 +1,131 @@
+.lensblur {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #0e0e0e;
+  color: #d8d8d8;
+  font-family: "Bebas Neue Pro", "Bebas Neue", "Arial Narrow", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  text-align: left;
+  --mx: -9999px;
+  --my: -9999px;
+  --lens-size: clamp(180px, 26vw, 340px);
+  --lens-blur: 16px;
+}
+.lensblur__text {
+  grid-area: 1/1;
+  margin: 0;
+  padding: 0 4vw;
+  font-size: clamp(3rem, 10.5vw, 9.5rem);
+}
+.lensblur__text--blur {
+  filter: blur(var(--lens-blur)) brightness(1.35);
+  pointer-events: none;
+  user-select: none;
+}
+.lensblur--active .lensblur__text {
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+}
+.lensblur--active .lensblur__text--blur {
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+}
+.lensblur--stroke .lensblur__text {
+  color: transparent;
+  -webkit-text-stroke: 0.045em #d8d8d8;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #d8d8d8;
+  background-color: #0e0e0e;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.demo-stage {
+  position: fixed;
+  inset: 0;
+}
+
+.frame {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "title demos" "links tags";
+  align-content: space-between;
+  padding: 1.5rem 2rem;
+  pointer-events: none;
+}
+.frame a {
+  pointer-events: auto;
+  color: #ffffff;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+.frame a:hover, .frame a:focus {
+  color: rgba(255, 255, 255, 0.6);
+}
+.frame__title {
+  grid-area: title;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.frame__links {
+  grid-area: links;
+  display: flex;
+  gap: 1rem;
+}
+.frame__tags {
+  grid-area: tags;
+  display: flex;
+  gap: 1rem;
+  justify-content: end;
+}
+.frame__demos {
+  grid-area: demos;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: end;
+}
+.frame__demos span {
+  opacity: 0.6;
+}
+.frame__demos a.selected {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .frame {
+    grid-template-columns: 1fr;
+    grid-template-areas: "title" "demos" "links";
+  }
+  .frame__demos, .frame__tags {
+    justify-content: start;
+  }
+  .frame__tags {
+    display: none;
+  }
+}
