@@ -56,9 +56,9 @@ $textHtml = nl2br($h(str_replace('\n', "\n", $config['text'])), false);
 			<a href="https://github.com/guilanier/codrops-sdf-lensblur">Original source</a>
 		</nav>
 		<nav class="frame__tags">
-			<span>#webgl</span>
-			<span>#sdf</span>
-			<span>#shader</span>
+			<span>#css</span>
+			<span>#mask</span>
+			<span>#lensblur</span>
 		</nav>
 	</header>
 

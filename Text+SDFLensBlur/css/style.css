@@ -12,27 +12,55 @@
   text-align: left;
   --mx: -9999px;
   --my: -9999px;
-  --lens-size: clamp(180px, 26vw, 340px);
-  --lens-blur: 16px;
+  --lens-size: clamp(200px, 28vw, 380px);
+  --wave-amplitude: clamp(14px, 3.2vw, 34px);
+  --wave-radius: calc(clamp(200px, 28vw, 380px) * 0.55);
+  --wave-tilt: 7deg;
 }
 .lensblur__text {
   grid-area: 1/1;
   margin: 0;
-  padding: 0 4vw;
+  padding: 1.1em max(4vw, 0.65em) 0.65em;
   font-size: clamp(3rem, 10.5vw, 9.5rem);
 }
 .lensblur__text--blur {
-  filter: blur(var(--lens-blur)) brightness(1.35);
   pointer-events: none;
   user-select: none;
 }
-.lensblur--active .lensblur__text {
-  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
-  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+.lensblur__char {
+  display: inline-block;
+  will-change: transform;
 }
-.lensblur--active .lensblur__text--blur {
-  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
-  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+.lensblur__sr-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.lensblur--active .lensblur__text {
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 38%, #000 92%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 38%, #000 92%);
+}
+.lensblur--active .lensblur__text--blur-1 {
+  filter: blur(5px);
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 26%, #000 50%, #000 68%, transparent 94%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 26%, #000 50%, #000 68%, transparent 94%);
+}
+.lensblur--active .lensblur__text--blur-2 {
+  filter: blur(14px) brightness(1.15);
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 4%, #000 28%, #000 48%, transparent 74%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 4%, #000 28%, #000 48%, transparent 74%);
+}
+.lensblur--active .lensblur__text--blur-3 {
+  filter: blur(30px) brightness(1.3);
+  -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 0%, #000 22%, transparent 54%);
+  mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 0%, #000 22%, transparent 54%);
 }
 .lensblur--stroke .lensblur__text {
   color: transparent;

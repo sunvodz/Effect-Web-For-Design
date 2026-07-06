@@ -17,9 +17,17 @@ $fx-line-height: 1; // 100%
 $fx-text-align: left;
 $fx-font-size: clamp(3rem, 10.5vw, 9.5rem); // ~152px on a desktop viewport
 
-// lens
-$lens-size: clamp(180px, 26vw, 340px); // lens radius
-$lens-blur: 16px;                      // blur strength inside the lens
+// lens — three graded blur levels melt the text progressively toward the
+// lens center (no hard transition), like the original SDF demo
+$lens-size: clamp(200px, 28vw, 380px); // lens radius
+$lens-blur-far: 5px;                   // outer ring: slight blur
+$lens-blur-mid: 14px;                  // middle ring: medium blur
+$lens-blur-near: 30px;                 // core: heavy blur, fading out
+
+// letter wave (arch) — nearby letters lift up as the mouse passes by them
+$wave-amplitude: clamp(14px, 3.2vw, 34px); // peak vertical lift at the cursor
+$wave-radius: calc(#{$lens-size} * 0.55);  // falloff distance (bigger = wider arch)
+$wave-tilt: 7deg;                          // peak tilt at the sides of the arch
 
 // demo page ui font
 $font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -48,31 +56,77 @@ $font-stack: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --mx: -9999px;
   --my: -9999px;
   --lens-size: #{$lens-size};
-  --lens-blur: #{$lens-blur};
+  --wave-amplitude: #{$wave-amplitude};
+  --wave-radius: #{$wave-radius};
+  --wave-tilt: #{$wave-tilt};
 
   &__text {
-    grid-area: 1 / 1; // both layers stack in the same cell
+    grid-area: 1 / 1; // all layers stack in the same cell
     margin: 0;
-    padding: 0 4vw;
+    // generous padding: the blur halo (and the letter lift) must stay
+    // INSIDE the box, because the mask clips anything painted outside it
+    padding: 1.1em max(4vw, 0.65em) 0.65em;
     font-size: $fx-font-size;
   }
 
-  // blurred clone (created by js/main.js) — decorative only
+  // blurred clones (created by js/main.js) — decorative only
   &__text--blur {
-    filter: blur(var(--lens-blur)) brightness(1.35);
     pointer-events: none;
     user-select: none;
   }
 
-  // masks activate only when the script runs (no-js = plain sharp text)
-  &--active &__text {
-    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
-    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 30%, #000 78%);
+  // per-letter span (js/main.js splits the text so each letter can lift
+  // independently); transform is written inline per-frame by the script
+  &__char {
+    display: inline-block;
+    will-change: transform;
   }
 
-  &--active &__text--blur {
-    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
-    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 34%, transparent 80%);
+  // full text kept for assistive tech once the visible copy is split into
+  // per-letter spans (screen readers can read those unreliably)
+  &__sr-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  // ------------------------------------------------------------------
+  // Graded melt: each layer occupies a soft ring around the lens center;
+  // adjacent rings overlap generously so the blur strength ramps up
+  // continuously toward the center and fades away completely — no cuts.
+  // (percentages are fractions of --lens-size along the lens radius)
+  // ------------------------------------------------------------------
+
+  // masks activate only when the script runs (no-js = plain sharp text)
+  &--active &__text {
+    // sharp text: fully visible outside the lens, gone at the core
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 38%, #000 92%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 38%, #000 92%);
+  }
+
+  &--active &__text--blur-1 {
+    filter: blur($lens-blur-far);
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 26%, #000 50%, #000 68%, transparent 94%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 26%, #000 50%, #000 68%, transparent 94%);
+  }
+
+  &--active &__text--blur-2 {
+    filter: blur($lens-blur-mid) brightness(1.15);
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 4%, #000 28%, #000 48%, transparent 74%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), transparent 4%, #000 28%, #000 48%, transparent 74%);
+  }
+
+  &--active &__text--blur-3 {
+    filter: blur($lens-blur-near) brightness(1.3);
+    -webkit-mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 0%, #000 22%, transparent 54%);
+    mask-image: radial-gradient(circle var(--lens-size) at var(--mx) var(--my), #000 0%, #000 22%, transparent 54%);
   }
 
   // variation: outlined text (like the original demo's variation 2)
